@@ -57,49 +57,49 @@
 main:
 	@ args = 0, pretend = 0, frame = 56
 	@ frame_needed = 1, uses_anonymous_args = 0
-	stmfd	sp!, {r4, fp, lr} --lista de registradores a serem lidos
-	add	fp, sp, #8  		--fp=sp+8
-	sub	sp, sp, #60 		--sp=sp-60
+	stmfd	sp!, {r4, fp, lr}		--lista de registradores a serem lidos
+	add	fp, sp, #8  			--fp=sp+8
+	sub	sp, sp, #60 			--sp=sp-60
 	mov	r3, #0  			--r3=0
-	str	r3, [fp, #-52] 		--fp-52=r3
+	str	r3, [fp, #-52] 			--fp-52=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-48]		--fp-48=r3
+	str	r3, [fp, #-48]			--fp-48=r3
 	ldr	r3, .L28			--r3= .LC0
-	str	r3, [fp, #-44]		--fp-44=r3
+	str	r3, [fp, #-44]			--fp-44=r3
 	ldr	r3, .L28+4			--r3= .LC1
-	str	r3, [fp, #-40]		--fp-40=r3
-	ldr	r0, [fp, #-44]		--r0=fp-44
+	str	r3, [fp, #-40]			--fp-40=r3
+	ldr	r0, [fp, #-44]			--r0=fp-44
 	ldr	r1, .L28+8			--r1= .LC2
 	bl	fopen				--function fopen(arq-name.*,format to open) in this case ("file/meta.dat","r") read-only
-	str	r0, [fp, #-52]		--fp-52=r0
-	ldr	r3, [fp, #-52]		--r3=fp-52
+	str	r0, [fp, #-52]			--fp-52=r0
+	ldr	r3, [fp, #-52]			--r3=fp-52
 	cmp	r3, #0				--r3==NULL
-	bne	.L2					--if not equal jump to L2
+	bne	.L2				--if not equal jump to L2
 	ldr	r0, .L28+12			--r0= .LC3
 	bl	puts				--imprime r0
 .L2:
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-68]
+	str	r3, [fp, #-68]			--(fp-68)=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-64]
+	str	r3, [fp, #-64]			--(fp-64)=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-36]
+	str	r3, [fp, #-36]			--(fp-36)=r3
 	mov	r0, #52				--r0=52
-	bl	malloc
+	bl	malloc				--alocação de memoria
 	mov	r3, r0				--r3=r0
-	str	r3, [fp, #-36]
+	str	r3, [fp, #-36]			--(fp-36)=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-32]
+	str	r3, [fp, #-32]			--(fp-32)=r3
 	mov	r0, #16				--r0=16
-	bl	malloc
+	bl	malloc				--branch-link alocação de memoria
 	mov	r3, r0				--r3=r0
-	str	r3, [fp, #-32]
+	str	r3, [fp, #-32]			--(fp-32)=r3
 	sub	r3, fp, #68			--r3=fp-68
 	mov	r0, r3				--r0=r3
 	mov	r1, #4				--r1=4
 	mov	r2, #1				--r2=1
-	ldr	r3, [fp, #-52]
-	bl	fread
+	ldr	r3, [fp, #-52]			--r3=(fp-52)
+	bl	fread				--Função de leitura de arquivo
 	ldr	r3, [fp, #-68]
 	ldr	r0, .L28+16
 	mov	r1, r3				--r1=r3
