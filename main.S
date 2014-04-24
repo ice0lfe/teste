@@ -126,7 +126,7 @@ main:
 	ldr	r3, [fp, #-60]			--r3=(fp-60)
 	cmp	r3, #3				--r3==3
 	ldrls	pc, [pc, r3, asl #2]
-	b	.L4
+	b	.L4				--jump to .L4
 .L9:						--for/while
 	.word	.L5				--switch (i): tamanho de bits para leitura: case 0
 	.word	.L6				--case 1
