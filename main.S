@@ -100,83 +100,83 @@ main:
 	mov	r2, #1				--r2=1
 	ldr	r3, [fp, #-52]			--r3=(fp-52)
 	bl	fread				--Função de leitura de arquivo
-	ldr	r3, [fp, #-68]
-	ldr	r0, .L28+16
+	ldr	r3, [fp, #-68]			--r3=(fp-68)
+	ldr	r0, .L28+16			--r0= .LC4
 	mov	r1, r3				--r1=r3
-	bl	printf
-	ldr	r2, [fp, #-68]
-	ldr	r3, [fp, #-36]
-	str	r2, [r3, #0]
+	bl	printf				--função printf imprimir dados meta.dat
+	ldr	r2, [fp, #-68]			--r2=(fp-68)
+	ldr	r3, [fp, #-36]			--r3=(fp-36)
+	str	r2, [r3, #0]			--(r3+0)=r2
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-60]
+	str	r3, [fp, #-60]			--(fp-60)=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-56]
+	str	r3, [fp, #-56]			--(fp-56)=r3
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-60]
-	b	.L3
+	str	r3, [fp, #-60]			--(fp-60)=r3
+	b	.L3				--jump to .L3
 .L10:
-	ldr	r3, [fp, #-60]
-	mov	r3, r3, asl #2
-	ldr	r2, [fp, #-32]
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
+	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r4, r2, r3			--r4=r2+r3
 	mov	r0, #8				--r0=8
-	bl	malloc
+	bl	malloc				--alocação de memoria
 	mov	r3, r0				--r3=r0
-	str	r3, [r4, #0]
-	ldr	r3, [fp, #-60]
+	str	r3, [r4, #0]			--(r4+0)=r3
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
 	cmp	r3, #3				--r3==3
 	ldrls	pc, [pc, r3, asl #2]
 	b	.L4
 .L9:						--for/while
-	.word	.L5				--switch (i): tamanho de bits para leitura
-	.word	.L6
-	.word	.L7
-	.word	.L8
+	.word	.L5				--switch (i): tamanho de bits para leitura: case 0
+	.word	.L6				--case 1
+	.word	.L7				--case 2
+	.word	.L8				--case 3
 .L5:
 	mov	r3, #5				--r3=5    (0)=5
-	str	r3, [fp, #-56]
-	b	.L4					--branch to .L4
+	str	r3, [fp, #-56]			--(fp-56)=r3
+	b	.L4				--branch to .L4
 .L6:
 	mov	r3, #6				--r3=6		(1)=6
-	str	r3, [fp, #-56]
-	b	.L4					--branch to .L4
+	str	r3, [fp, #-56]			--(fp-56)=r3
+	b	.L4				--branch to .L4
 .L7:
 	mov	r3, #4				--r3=4		(2)=4
-	str	r3, [fp, #-56]
-	b	.L4					--branch to .L4
+	str	r3, [fp, #-56]			--(fp-56)=r3
+	b	.L4				--branch to .L4
 .L8:
 	mov	r3, #6				--r3=6		(3)=6
-	str	r3, [fp, #-56]
-	mov	r0, r0	@ nop
+	str	r3, [fp, #-56]			--(fp-56)=r3
+	mov	r0, r0	@ nop			--r0=r0 not operation
 .L4:
-	ldr	r3, [fp, #-60]
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
+	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r3, r2, r3			--r3=r2+r3
-	ldr	r2, [r3, #0]
-	ldr	r3, [fp, #-56]
+	ldr	r2, [r3, #0]			--r2=(r3+0)
+	ldr	r3, [fp, #-56]			--r3=(fp-56)
 	mov	r0, r2				--r0=r2
 	mov	r1, #1				--r1=1
 	mov	r2, r3				--r2=r3
-	ldr	r3, [fp, #-52]
-	bl	fread
-	ldr	r3, [fp, #-60]
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]
+	ldr	r3, [fp, #-52]			--r3=(fp-52)
+	bl	fread				--ler bits do arquivo meta.dat
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
+	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r3, r2, r3			--r3=r2+r3
-	ldr	r1, [r3, #0]
-	ldr	ip, [fp, #-36]
-	ldr	r2, [fp, #-60]
+	ldr	r1, [r3, #0]			--r1=(r3+0)
+	ldr	ip, [fp, #-36]			--ip=(fp-36)
+	ldr	r2, [fp, #-60]			--r2=(fp-60)
 	mov	r0, #4				--r0=4
 	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1		--r3=r3 shift left 1x
+	mov	r3, r3, asl #1			--r3=r3 shift left 1x
 	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
 	add	r3, ip, r3			--r3=ip+r3
 	add	r3, r3, r0			--r3=r3+r0
-	str	r1, [r3, #0]
-	ldr	r0, [fp, #-36]
-	ldr	r2, [fp, #-60]
+	str	r1, [r3, #0]			--(r3+0)=r1
+	ldr	r0, [fp, #-36]			--r0=(fp-36)
+	ldr	r2, [fp, #-60]			--r2=(fp-60)
 	mov	r1, #4				--r1=4
 	mov	r3, r2				--r3=r2
 	mov	r3, r3, asl #1		--r3=r3 shift left 1x
@@ -184,28 +184,28 @@ main:
 	mov	r3, r3, asl #2		--r3=r3 shift left 2x
 	add	r3, r0, r3			--r3=r0+r3
 	add	r3, r3, r1			--r3=r3+r1
-	ldr	r3, [r3, #0]
-	ldr	r0, .L28+20
+	ldr	r3, [r3, #0]			--r3=(r3+0)
+	ldr	r0, .L28+20			--r0= .LC5
 	mov	r1, r3				--r1=r3
-	bl	printf
-	ldr	r3, [fp, #-60]
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]
+	bl	printf				--imprimir dados do meta.dat
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
+	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r3, r2, r3			--r3=r2+r3
-	ldr	r2, [r3, #0]
-	ldr	r3, [fp, #-56]
+	ldr	r2, [r3, #0]			--r2=(r3+0)
+	ldr	r3, [fp, #-56]			--r3=(fp-56)
 	add	r3, r2, r3			--r3=r2+r3
 	mov	r0, r3				--r0=r3
 	mov	r1, #1				--r1=1
 	mov	r2, #1				--r2=1
-	ldr	r3, [fp, #-52]
-	bl	fread
-	ldr	r3, [fp, #-60]
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x		
-	ldr	r2, [fp, #-32]
+	ldr	r3, [fp, #-52]			--r3=(fp-52)
+	bl	fread				--ler dados do meta.dat
+	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x
+	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r3, r2, r3			--r3=r2+r3
-	ldr	r2, [r3, #0]
-	ldr	r3, [fp, #-56]
+	ldr	r2, [r3, #0]			--r2=(r3+0)
+	ldr	r3, [fp, #-56]			--r3=(fp-56)
 	add	r3, r2, r3			--r3=r2+r3
 	ldrb	r1, [r3, #0]	@ zero_extendqisi2
 	ldr	r0, [fp, #-36]
