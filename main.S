@@ -287,7 +287,7 @@ main:
 	ldr	r3, [fp, #-28]
 	cmp	r3, #0				--r3==0
 	bne	.L12				--if not equal jump to L12
-	ldr	r0, .L28+40			
+	ldr	r0, .L28+40			--r0= .LC10
 	bl	printf
 .L12:
 	mov	r3, #0				--r3=0
