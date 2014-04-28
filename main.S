@@ -61,39 +61,39 @@ main:
 	add	fp, sp, #8  			--fp=sp+8
 	sub	sp, sp, #60 			--sp=sp-60
 	mov	r3, #0  			--r3=0
-	str	r3, [fp, #-52] 			--fp-52=r3
+	str	r3, [fp, #-52] 			--(fp-52)=r3	(fp-52)<=FILE *mdb=NULL
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-48]			--fp-48=r3
-	ldr	r3, .L28			--r3= .LC0
-	str	r3, [fp, #-44]			--fp-44=r3
-	ldr	r3, .L28+4			--r3= .LC1
-	str	r3, [fp, #-40]			--fp-40=r3
-	ldr	r0, [fp, #-44]			--r0=fp-44
-	ldr	r1, .L28+8			--r1= .LC2
+	str	r3, [fp, #-48]			--fp-48=r3	(fp-48)<=FILE *db=NULL
+	ldr	r3, .L28			--r3= .LC0 r3<=conteudo char *mdt
+	str	r3, [fp, #-44]			--(fp-44)=r3 => char *mdt = (fp-44)
+	ldr	r3, .L28+4			--r3= .LC1 r3<=conteudo char *data
+	str	r3, [fp, #-40]			--(fp-40)=r3 => char *data =(fp-40)
+	ldr	r0, [fp, #-44]			--r0=(fp-44) r0<= *mdt
+	ldr	r1, .L28+8			--r1= .LC2  r1<=operação para abertura do arquivo 'r'
 	bl	fopen				--function fopen(arq-name.*,format to open) in this case ("file/meta.dat","r") read-only
-	str	r0, [fp, #-52]			--fp-52=r0
-	ldr	r3, [fp, #-52]			--r3=fp-52
-	cmp	r3, #0				--r3==NULL
+	str	r0, [fp, #-52]			--(fp-52)=r0 resultado do fopen é guardado no r0 e do r0 para o endereço (fp-52) *mdb
+	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3<=guarda o file meta.dat no mdb
+	cmp	r3, #0				--r3==NULL	r3<=verifica se o arquivo 
 	bne	.L2				--if not equal jump to L2
 	ldr	r0, .L28+12			--r0= .LC3
 	bl	puts				--imprime r0
 .L2:
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-68]			--(fp-68)=r3
+	str	r3, [fp, #-68]			--(fp-68)=r3	int a
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-64]			--(fp-64)=r3
+	str	r3, [fp, #-64]			--(fp-64)=r3	int b
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-36]			--(fp-36)=r3
-	mov	r0, #52				--r0=52
+	str	r3, [fp, #-36]			--(fp-36)=r3	mttype *mt=NULL
+	mov	r0, #52				--r0=52		tamanho de mttype
 	bl	malloc				--alocação de memoria
 	mov	r3, r0				--r3=r0
-	str	r3, [fp, #-36]			--(fp-36)=r3
+	str	r3, [fp, #-36]			--(fp-36)=r3	resultado do malloc movido r3<=r0 e guardado em (fp-36)
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-32]			--(fp-32)=r3
-	mov	r0, #16				--r0=16
+	str	r3, [fp, #-32]			--(fp-32)=r3	char *out=NULL
+	mov	r0, #16				--r0=16		tamanho para malloc de (*char) * 4
 	bl	malloc				--branch-link alocação de memoria
 	mov	r3, r0				--r3=r0
-	str	r3, [fp, #-32]			--(fp-32)=r3
+	str	r3, [fp, #-32]			--(fp-32)=r3	armazena resultado do malloc no r3 e da um store para (fp-32)
 	sub	r3, fp, #68			--r3=fp-68
 	mov	r0, r3				--r0=r3
 	mov	r1, #4				--r1=4
@@ -271,11 +271,11 @@ main:
 	ldr	r0, [fp, #-40]
 	ldr	r1, .L28+32
 	bl	fopen				--abrir o data.dat
-	str	r0, [fp, #-48]
-	ldr	r3, [fp, #-48]
-	cmp	r3, #0				--r3==NULL
+	str	r0, [fp, #-48]			--resultado fopen para (fp-48)
+	ldr	r3, [fp, #-48]			--r3=db
+	cmp	r3, #0				--if(r3==NULL)
 	bne	.L11				--if not equal jump to L11
-	ldr	r0, .L28+36			--se e igual avisa que nao e possivel abrir o arquivo
+	ldr	r0, .L28+36			--se e igual avisa que nao foi possivel abrir o arquivo
 	bl	printf
 .L11:
 	mov	r3, #0				--r3=0
