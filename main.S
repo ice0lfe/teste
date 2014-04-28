@@ -94,28 +94,28 @@ main:
 	bl	malloc				--branch-link alocação de memoria
 	mov	r3, r0				--r3=r0
 	str	r3, [fp, #-32]			--(fp-32)=r3	armazena resultado do malloc no r3 e da um store para (fp-32)
-	sub	r3, fp, #68			--r3=fp-68
-	mov	r0, r3				--r0=r3
-	mov	r1, #4				--r1=4
-	mov	r2, #1				--r2=1
-	ldr	r3, [fp, #-52]			--r3=(fp-52)
-	bl	fread				--Função de leitura de arquivo
-	ldr	r3, [fp, #-68]			--r3=(fp-68)
-	ldr	r0, .L28+16			--r0= .LC4
-	mov	r1, r3				--r1=r3
-	bl	printf				--função printf imprimir dados meta.dat
-	ldr	r2, [fp, #-68]			--r2=(fp-68)
-	ldr	r3, [fp, #-36]			--r3=(fp-36)
-	str	r2, [r3, #0]			--(r3+0)=r2
+	sub	r3, fp, #68			--r3=fp-68	armazena endereço do int a
+	mov	r0, r3				--r0=r3		int a para r0
+	mov	r1, #4				--r1=4		4 ou tamanho de int para r1
+	mov	r2, #1				--r2=1		quantas vezes o tamanho sera lido para r2
+	ldr	r3, [fp, #-52]			--r3=(fp-52)	carrega *mdb no r3
+	bl	fread				--Função de leitura de arquivo r0 endereço a guardar, r1 tamanho do dado, r2 numero de vezes do tamanho ser carregado e r3 FILE *mdb
+	ldr	r3, [fp, #-68]			--r3=(fp-68) carrega int a r3
+	ldr	r0, .L28+16			--r0= .LC4	carrega numero de campos
+	mov	r1, r3				--r1=r3		int a vai para r1
+	bl	printf				--função printf imprimir numero de campos do meta.dat
+	ldr	r2, [fp, #-68]			--r2=(fp-68)	r2= int a
+	ldr	r3, [fp, #-36]			--r3=(fp-36) 	r3=mttype *mt ja alocado
+	str	r2, [r3, #0]			--(r3+0)=r2	int a guardado no primeiro espaço do mttype *mt
+	mov	r3, #0				--r3=0		r3=0
+	str	r3, [fp, #-60]			--(fp-60)=r3	int i=0
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-60]			--(fp-60)=r3
+	str	r3, [fp, #-56]			--(fp-56)=r3	int c
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-56]			--(fp-56)=r3
-	mov	r3, #0				--r3=0
-	str	r3, [fp, #-60]			--(fp-60)=r3
-	b	.L3				--jump to .L3
+	str	r3, [fp, #-60]			--(fp-60)=r3	novamente i=0
+	b	.L3				--jump to .L3	inicio do for
 .L10:
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	ldr	r3, [fp, #-60]			--r3=(fp-60)	int a =>r3
 	mov	r3, r3, asl #2			--r3=r3 shift left 2x
 	ldr	r2, [fp, #-32]			--r2=(fp-32)
 	add	r4, r2, r3			--r4=r2+r3
@@ -262,12 +262,12 @@ main:
 	add	r3, r3, #1			--r3=r3+1
 	str	r3, [fp, #-60]
 .L3:
-	ldr	r3, [fp, #-68]
-	ldr	r2, [fp, #-60]
-	cmp	r2, r3				--r2==r3
+	ldr	r3, [fp, #-68]			--r3=int a
+	ldr	r2, [fp, #-60]			--r2=int i
+	cmp	r2, r3				--if(i<a)
 	blt	.L10				--se e menor pula para .L10, final do loop
-	ldr	r0, [fp, #-52]
-	bl	fclose				--fechar o meta.dat
+	ldr	r0, [fp, #-52]			--r0=FILE *mdb
+	bl	fclose				--fechar o FILE *mdb ou meta.dat
 	ldr	r0, [fp, #-40]
 	ldr	r1, .L28+32
 	bl	fopen				--abrir o data.dat
