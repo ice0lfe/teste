@@ -72,8 +72,8 @@ main:
 	ldr	r1, .L28+8			--r1= .LC2  r1<=operação para abertura do arquivo 'r'
 	bl	fopen				--function fopen(arq-name.*,format to open) in this case ("file/meta.dat","r") read-only
 	str	r0, [fp, #-52]			--(fp-52)=r0 resultado do fopen é guardado no r0 e do r0 para o endereço (fp-52) *mdb
-	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3<=guarda o file meta.dat no mdb
-	cmp	r3, #0				--r3==NULL	r3<=verifica se o arquivo 
+	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3<=guarda o file meta.dat no r3
+	cmp	r3, #0				--r3==NULL	r3<=verifica se o arquivo é NULL
 	bne	.L2				--if not equal jump to L2
 	ldr	r0, .L28+12			--r0= .LC3
 	bl	puts				--imprime r0
@@ -115,46 +115,46 @@ main:
 	str	r3, [fp, #-60]			--(fp-60)=r3	novamente i=0
 	b	.L3				--jump to .L3	inicio do for
 .L10:
-	ldr	r3, [fp, #-60]			--r3=(fp-60)	int a =>r3
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32)
-	add	r4, r2, r3			--r4=r2+r3
-	mov	r0, #8				--r0=8
+	ldr	r3, [fp, #-60]			--r3=(fp-60)	int i =>r3
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x	int i*4
+	ldr	r2, [fp, #-32]			--r2=(fp-32)	r2=inicio do char *out
+	add	r4, r2, r3			--r4=r2+r3	r4=inicio do char *out + deslocamento (i*4)
+	mov	r0, #8				--r0=8		tamanho de char * 8
 	bl	malloc				--alocação de memoria
-	mov	r3, r0				--r3=r0
-	str	r3, [r4, #0]			--(r4+0)=r3
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
-	cmp	r3, #3				--r3==3
-	ldrls	pc, [pc, r3, asl #2]
+	mov	r3, r0				--r3=r0		resultado de malloc para r3
+	str	r3, [r4, #0]			--(r4+0)=r3	r3 é guardado no endereço que está no r4
+	ldr	r3, [fp, #-60]			--r3=(fp-60)	r3= int i
+	cmp	r3, #3				--r3==3		if(i==3)
+	ldrls	pc, [pc, r3, asl #2]		--
 	b	.L4				--jump to .L4
-.L9:						--for/while
-	.word	.L5				--switch (i): tamanho de bits para leitura: case 0
+.L9:
+	.word	.L5				--case 0
 	.word	.L6				--case 1
 	.word	.L7				--case 2
 	.word	.L8				--case 3
 .L5:
-	mov	r3, #5				--r3=5    (0)=5
+	mov	r3, #5				--r3=5    (i==0)c=5
 	str	r3, [fp, #-56]			--(fp-56)=r3
 	b	.L4				--branch to .L4
 .L6:
-	mov	r3, #6				--r3=6		(1)=6
+	mov	r3, #6				--r3=6		(i==1)c=6
 	str	r3, [fp, #-56]			--(fp-56)=r3
 	b	.L4				--branch to .L4
 .L7:
-	mov	r3, #4				--r3=4		(2)=4
+	mov	r3, #4				--r3=4		(i==2)c=4
 	str	r3, [fp, #-56]			--(fp-56)=r3
 	b	.L4				--branch to .L4
 .L8:
-	mov	r3, #6				--r3=6		(3)=6
+	mov	r3, #6				--r3=6		(i==3)c=6
 	str	r3, [fp, #-56]			--(fp-56)=r3
 	mov	r0, r0	@ nop			--r0=r0 not operation
 .L4:
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
+	ldr	r3, [fp, #-60]			--r3=(fp-60) r3=int i
 	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32)
-	add	r3, r2, r3			--r3=r2+r3
+	ldr	r2, [fp, #-32]			--r2=(fp-32) r2=char **out
+	add	r3, r2, r3			--r3=r2+r3  r3=int i + char **out
 	ldr	r2, [r3, #0]			--r2=(r3+0)
-	ldr	r3, [fp, #-56]			--r3=(fp-56)
+	ldr	r3, [fp, #-56]			--r3=(fp-56) r3= int c
 	mov	r0, r2				--r0=r2
 	mov	r1, #1				--r1=1
 	mov	r2, r3				--r2=r3
