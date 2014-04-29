@@ -125,7 +125,7 @@ main:
 	str	r3, [r4, #0]			--(r4+0)=r3	r3 é guardado no endereço que está no r4
 	ldr	r3, [fp, #-60]			--r3=(fp-60)	r3= int i
 	cmp	r3, #3				--r3==3		if(i==3)
-	ldrls	pc, [pc, r3, asl #2]		--
+	ldrls	pc, [pc, r3, asl #2]		--se i <= 3 pc carrega um dos cases
 	b	.L4				--jump to .L4
 .L9:
 	.word	.L5				--case 0
@@ -149,30 +149,30 @@ main:
 	str	r3, [fp, #-56]			--(fp-56)=r3
 	mov	r0, r0	@ nop			--r0=r0 not operation
 .L4:
-	ldr	r3, [fp, #-60]			--r3=(fp-60) r3=int i
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32) r2=char **out
-	add	r3, r2, r3			--r3=r2+r3  r3=int i + char **out
-	ldr	r2, [r3, #0]			--r2=(r3+0)
-	ldr	r3, [fp, #-56]			--r3=(fp-56) r3= int c
-	mov	r0, r2				--r0=r2
-	mov	r1, #1				--r1=1
-	mov	r2, r3				--r2=r3
-	ldr	r3, [fp, #-52]			--r3=(fp-52)
-	bl	fread				--ler bits do arquivo meta.dat
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32)
-	add	r3, r2, r3			--r3=r2+r3
-	ldr	r1, [r3, #0]			--r1=(r3+0)
-	ldr	ip, [fp, #-36]			--ip=(fp-36)
-	ldr	r2, [fp, #-60]			--r2=(fp-60)
+	ldr	r3, [fp, #-60]			--r3=(fp-60) 	r3=int i
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x  	int i * 4
+	ldr	r2, [fp, #-32]			--r2=(fp-32) 	r2=char **out
+	add	r3, r2, r3			--r3=r2+r3  	r3=int i + char **out
+	ldr	r2, [r3, #0]			--r2=(r3+0) 	r2 recebe char out[i*4]
+	ldr	r3, [fp, #-56]			--r3=(fp-56) 	r3= int c
+	mov	r0, r2				--r0=r2		char out[i] vai para r0
+	mov	r1, #1				--r1=1		r1 recebe sizeof(char)
+	mov	r2, r3				--r2=r3		r2 recebe int c tamanho de vezes que o tipo anterior sera lido
+	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3 recebe FILE *mdb
+	bl	fread				--ler bits do arquivo meta.dat utiliza [r0, r1, r2, r3]
+	ldr	r3, [fp, #-60]			--r3=(fp-60) r3 recebe int i
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x	 int i * 4
+	ldr	r2, [fp, #-32]			--r2=(fp-32)	r2 recebe char out[i]
+	add	r3, r2, r3			--r3=r2+r3	r3 recebe endereço de char out[i+1]
+	ldr	r1, [r3, #0]			--r1=(r3+0)	r1 recebe da memoria conteudo de char out[i+1]
+	ldr	ip, [fp, #-36]			--ip=(fp-36) ip recebe mttype *mt
+	ldr	r2, [fp, #-60]			--r2=(fp-60) r2 recebe int i
 	mov	r0, #4				--r0=4
-	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1			--r3=r3 shift left 1x
-	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	add	r3, ip, r3			--r3=ip+r3
+	mov	r3, r2				--r3=r2 r3 recebe int i
+	mov	r3, r3, asl #1			--r3=r3 shift left 1x r3= r3 * 2
+	add	r3, r3, r2			--r3=r3+r2	r3 = i*2 + i
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x	r3= i*3 *4
+	add	r3, ip, r3			--r3=ip+r3	r3 recebe mttype *mt[]
 	add	r3, r3, r0			--r3=r3+r0
 	str	r1, [r3, #0]			--(r3+0)=r1
 	ldr	r0, [fp, #-36]			--r0=(fp-36)
