@@ -172,34 +172,34 @@ main:
 	mov	r3, r3, asl #1			--r3=r3 shift left 1x r3= r3 * 2
 	add	r3, r3, r2			--r3=r3+r2	r3 = i*2 + i
 	mov	r3, r3, asl #2			--r3=r3 shift left 2x	r3= i*3 *4
-	add	r3, ip, r3			--r3=ip+r3	r3 recebe mttype *mt[]
-	add	r3, r3, r0			--r3=r3+r0
-	str	r1, [r3, #0]			--(r3+0)=r1
-	ldr	r0, [fp, #-36]			--r0=(fp-36)
-	ldr	r2, [fp, #-60]			--r2=(fp-60)
+	add	r3, ip, r3			--r3=ip+r3	r3 recebe mttype *mt
+	add	r3, r3, r0			--r3=r3+r0	r3 desloca para mt->dt
+	str	r1, [r3, #0]			--(r3+0)=r1	grava o conteudo do char out[i+1] em r1 para mt->dt[0].sname
+	ldr	r0, [fp, #-36]			--r0=(fp-36)	r0 recebe mttype *mt
+	ldr	r2, [fp, #-60]			--r2=(fp-60)	r2 recebe int i
 	mov	r1, #4				--r1=4
-	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1		--r3=r3 shift left 1x
-	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	add	r3, r0, r3			--r3=r0+r3
-	add	r3, r3, r1			--r3=r3+r1
-	ldr	r3, [r3, #0]			--r3=(r3+0)
-	ldr	r0, .L28+20			--r0= .LC5
-	mov	r1, r3				--r1=r3
-	bl	printf				--imprimir dados do meta.dat
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32)
-	add	r3, r2, r3			--r3=r2+r3
-	ldr	r2, [r3, #0]			--r2=(r3+0)
-	ldr	r3, [fp, #-56]			--r3=(fp-56)
-	add	r3, r2, r3			--r3=r2+r3
-	mov	r0, r3				--r0=r3
-	mov	r1, #1				--r1=1
-	mov	r2, #1				--r2=1
-	ldr	r3, [fp, #-52]			--r3=(fp-52)
-	bl	fread				--ler dados do meta.dat
+	mov	r3, r2				--r3=r2		r3 recebe int i do r2
+	mov	r3, r3, asl #1		--r3=r3 shift left 1x	r3 = i*2
+	add	r3, r3, r2			--r3=r3+r2	r3 = i*2 + i
+	mov	r3, r3, asl #2		--r3=r3 shift left 2x	r3 = i*3*4
+	add	r3, r0, r3			--r3=r0+r3	r3 = i*12 + endereço mttype *mt
+	add	r3, r3, r1			--r3=r3+r1	r3 = mt + i*12 + 4
+	ldr	r3, [r3, #0]			--r3=(r3+0)	r3 = *mt->dt[i]
+	ldr	r0, .L28+20			--r0= .LC5	r0 = traz a word de .LC5 para r0
+	mov	r1, r3				--r1=r3		traz o conteudo de *mt->dt[i] para r1
+	bl	printf				--imprimir dados do meta.dat utilizando  r0 e r1
+	ldr	r3, [fp, #-60]			--r3=(fp-60)	r3 carrega int i
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x	r3=i*4
+	ldr	r2, [fp, #-32]			--r2=(fp-32)	r2= char **out
+	add	r3, r2, r3			--r3=r2+r3	r3= i*4+ inicio de **out
+	ldr	r2, [r3, #0]			--r2=(r3+0)	r2= endereço de mt->dt[i].sname
+	ldr	r3, [fp, #-56]			--r3=(fp-56)	r3= int c
+	add	r3, r2, r3			--r3=r2+r3	r3= desloca ate mt->dt[i].type
+	mov	r0, r3				--r0=r3		grava o endereço de mt->dt[i].type em r0
+	mov	r1, #1				--r1=1		r1= sizeof(char)
+	mov	r2, #1				--r2=1		r2=quantidade de r1 s
+	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3= grava FILE *mdb
+	bl	fread				--ler dados do meta.dat, atributos do fread ->	(r0, r1, r2, r3)
 	ldr	r3, [fp, #-60]			--r3=(fp-60)
 	mov	r3, r3, asl #2			--r3=r3 shift left 2x
 	ldr	r2, [fp, #-32]			--r2=(fp-32)
@@ -228,46 +228,46 @@ main:
 	ldr	r0, .L28+24
 	mov	r1, r3				--r1=r3
 	bl	printf
-	sub	r3, fp, #64			--r3=fp-64
-	mov	r0, r3				--r0=r3
-	mov	r1, #4				--r1=4
-	mov	r2, #1				--r2=1
-	ldr	r3, [fp, #-52]
-	bl	fread				--ler do arquivo meta.dat a quantidade de bits indicados no .L5 ate .L8
-	ldr	r1, [fp, #-64]
-	ldr	ip, [fp, #-36]
-	ldr	r2, [fp, #-60]
+	sub	r3, fp, #64			--r3=fp-64	r3 carrega endereço de int b
+	mov	r0, r3				--r0=r3		r0=endereço de int b
+	mov	r1, #4				--r1=4		r1=sizeof(int)
+	mov	r2, #1				--r2=1		r2=quantidade de r1s
+	ldr	r3, [fp, #-52]			--r3 carrega FILE *mdb
+	bl	fread				--ler do arquivo meta.dat (r0, r1, r2, r3)
+	ldr	r1, [fp, #-64]			--r1 carrega int b lido pelo fread
+	ldr	ip, [fp, #-36]			--ip carrega mttype *mt
+	ldr	r2, [fp, #-60]			--r2 carrega int i
 	mov	r0, #12				--r0=12
-	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1		--r3=r3 shift left 1x
-	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	add	r3, ip, r3			--r3=ip+r3
-	add	r3, r3, r0			--r3=r3+r0
-	str	r1, [r3, #0]
-	ldr	r0, [fp, #-36]
-	ldr	r2, [fp, #-60]
+	mov	r3, r2				--r3=r2		r3= int i
+	mov	r3, r3, asl #1		--r3=r3 shift left 1x	r3=i*2
+	add	r3, r3, r2			--r3=r3+r2	r3=i*3
+	mov	r3, r3, asl #2		--r3=r3 shift left 2x	r3=i*12
+	add	r3, ip, r3			--r3=ip+r3	r3=i*12+ inicio do mt
+	add	r3, r3, r0			--r3=r3+r0	r3=inicio de mt + i*12 +12
+	str	r1, [r3, #0]			--grava no mt->dt[i].length o int b do r1
+	ldr	r0, [fp, #-36]			--r0 carrega mttype *mt
+	ldr	r2, [fp, #-60]			--r2 carrega int i
 	mov	r1, #12				--r1=12
-	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1		--r3=r3 shift left 1x
-	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	add	r3, r0, r3			--r3=r0+r3
-	add	r3, r3, r1			--r3=r3+r1
-	ldr	r3, [r3, #0]
-	ldr	r0, .L28+28
-	mov	r1, r3				--r1=r3
-	bl	printf
-	ldr	r3, [fp, #-60]
-	add	r3, r3, #1			--r3=r3+1
-	str	r3, [fp, #-60]
+	mov	r3, r2				--r3=r2		r3= int i
+	mov	r3, r3, asl #1		--r3=r3 shift left 1x	r3= i*2
+	add	r3, r3, r2			--r3=r3+r2	r3= i*3
+	mov	r3, r3, asl #2		--r3=r3 shift left 2x	r3= i*12
+	add	r3, r0, r3			--r3=r0+r3	r3= i*12 + inicio de mt
+	add	r3, r3, r1			--r3=r3+r1	r3= i*12 + inicio de mt + 12
+	ldr	r3, [r3, #0]			--r3 carrega mt->dt[i].length
+	ldr	r0, .L28+28			--carrega a word .LC7
+	mov	r1, r3				--r1=r3	  mt->dt[i].length
+	bl	printf				--imprime Tamanho com r0 e o numero do tamanho com r1
+	ldr	r3, [fp, #-60]			--r3 carrega int i
+	add	r3, r3, #1			--r3=r3+1 i++
+	str	r3, [fp, #-60]			--int i gravado na memoria
 .L3:
 	ldr	r3, [fp, #-68]			--r3=int a
 	ldr	r2, [fp, #-60]			--r2=int i
 	cmp	r2, r3				--if(i<a)
 	blt	.L10				--se e menor pula para .L10, final do loop
 	ldr	r0, [fp, #-52]			--r0=FILE *mdb
-	bl	fclose				--fechar o FILE *mdb ou meta.dat
+	bl	fclose				--fechar o FILE *mdb ou meta.dat com r0
 	ldr	r0, [fp, #-40]
 	ldr	r1, .L28+32
 	bl	fopen				--abrir o data.dat
