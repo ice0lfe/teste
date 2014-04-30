@@ -269,34 +269,34 @@ main:
 	ldr	r0, .L28+36			--se e igual avisa que nao foi possivel abrir o arquivo
 	bl	printf
 .L11:
-	ldr	r0, [fp, #-32]
-	bl	fclose
-	mov	r3, #0
-	str	r3, [fp, #-44]
+	ldr	r0, [fp, #-48]			--carrega FILE *db
+	bl	fclose				--fecha arquivo
+	mov	r3, #0				--r3=0
+	str	r3, [fp, #-60]			--int i =0
 	b	.L12
 .L13:
-	ldr	r3, [fp, #-44]
-	mov	r3, r3, asl #2
-	ldr	r2, [fp, #-16]
-	add	r3, r2, r3
-	ldr	r3, [r3, #0]
-	mov	r0, r3
-	bl	free
-	ldr	r3, [fp, #-44]
-	add	r3, r3, #1
-	str	r3, [fp, #-44]
+	ldr	r3, [fp, #-60]			--r3 carrega int i
+	mov	r3, r3, asl #2			--r3= i*4
+	ldr	r2, [fp, #-32]			--carrega char **out
+	add	r3, r2, r3			--desvio para out[i]
+	ldr	r3, [r3, #0]			--carrega out[i] para r3
+	mov	r0, r3				--move para r0
+	bl	free				-- libera memoria de r0
+	ldr	r3, [fp, #-60]			-- carrega int i
+	add	r3, r3, #1			--int i=i+1
+	str	r3, [fp, #-60]			--int i guardado na memoria
 .L12:
-	ldr	r3, [fp, #-44]
-	cmp	r3, #3
-	ble	.L13
-	ldr	r0, [fp, #-16]
-	bl	free
-	ldr	r0, [fp, #-20]
-	bl	free
-	mov	r3, #0
-	mov	r0, r3
-	sub	sp, fp, #8
-	ldmfd	sp!, {r4, fp, pc}
+	ldr	r3, [fp, #-60]			--r3 = int i
+	cmp	r3, #3				--i<=3
+	ble	.L13				--if true jump to .l13
+	ldr	r0, [fp, #-32]			--carrega char **out
+	bl	free				--libera char **out
+	ldr	r0, [fp, #-36]			--r0 carrega inicio de mttype *mt
+	bl	free				--libera memoria de mt
+	mov	r3, #0				--r3=0
+	mov	r0, r3				--r0=r3		return 0
+	sub	sp, fp, #8			--sp=fp-8
+	ldmfd	sp!, {r4, fp, pc}		--retorna para sistema operacional para encerar execução
 .L16:
 	.align	2
 .L15:
