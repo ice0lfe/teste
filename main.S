@@ -268,7 +268,7 @@ main:
 	blt	.L10				--se e menor pula para .L10, final do loop
 	ldr	r0, [fp, #-52]			--r0=FILE *mdb
 	bl	fclose				--fechar o FILE *mdb ou meta.dat com r0
-	ldr	r0, [fp, #-40]
+	ldr	r0, [fp, #-40]			--r0 recebe
 	ldr	r1, .L28+32
 	bl	fopen				--abrir o data.dat
 	str	r0, [fp, #-48]			--resultado fopen para (fp-48)
@@ -279,11 +279,11 @@ main:
 	bl	printf
 .L11:
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-28]
+	str	r3, [fp, #-28]			--int i guardado em (fp-28)
 	mov	r0, #128			--r0=128
-	bl	malloc
+	bl	malloc				--aloca a quantidade de memoria em r0
 	mov	r3, r0				--r3=r0
-	str	r3, [fp, #-28]
+	str	r3, [fp, #-28]			--armazena a memoria alocada em 
 	ldr	r3, [fp, #-28]
 	cmp	r3, #0				--r3==0
 	bne	.L12				--if not equal jump to L12
@@ -383,16 +383,16 @@ main:
 .L19:
 	ldr	r3, [fp, #-60]
 	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	ldr	r2, [fp, #-28]
-	add	r3, r2, r3			--r3=r2+r3
-	ldr	r3, [r3, #0]
-	ldr	r2, [fp, #-60]
+	ldr	r2, [fp, #-28]		--r2 carrega 
+	add	r3, r2, r3		--r3=r2+r3
+	ldr	r3, [r3, #0]		--r3 carrega
+	ldr	r2, [fp, #-60]		--r2 carrega int i
 	mov	r2, r2, asl #2		--r2=r2 shift left 2x
 	ldr	r1, [fp, #-24]
 	add	r2, r1, r2			--r2=r1+r2
 	ldr	r2, [r2, #0]
 	str	r2, [r3, #0]
-	ldr	r3, [fp, #-60]
+	ldr	r3, [fp, #-60]		--r3 carrega int i
 	mov	r3, r3, asl #2		--r3=r3 shift left 2x
 	ldr	r2, [fp, #-28]
 	add	r3, r2, r3			--r3=r2+r3
@@ -408,8 +408,8 @@ main:
 	ldr	r2, [fp, #-24]
 	add	r3, r2, r3			--r3=r2+r3
 	ldr	r2, [r3, #0]
-	ldr	r3, [fp, #-36]
-	ldr	r3, [r3, #24]
+	ldr	r3, [fp, #-36]			--r3 carrega mttype *mt
+	ldr	r3, [r3, #24]			--
 	mov	r0, r2				--r0=r2
 	mov	r1, #1				--r1=1
 	mov	r2, r3				--r2=r3
@@ -472,14 +472,14 @@ main:
 	mov	r2, r3				--r2=r3
 	mov	r3, r4				--r3=r4
 	bl	printf
-	sub	r3, fp, #64			--r3=fp-64
-	mov	r0, r3				--r0=r3
-	mov	r1, #4				--r1=4
-	mov	r2, #1 				--r2=1
-	ldr	r3, [fp, #-48]
-	bl	fread				--le do arquivo uma certa quantidade 
-	ldr	r3, [fp, #-60]
-	mov	r2, r3, lsr #31		--r2=r3 shift right 31x
+	sub	r3, fp, #64			--r3=fp-64	endereço de int b
+	mov	r0, r3				--r0=r3	&b
+	mov	r1, #4				--r1=4 sizeof(int)
+	mov	r2, #1 				--r2=1 numero de vezes do tipo acima
+	ldr	r3, [fp, #-48]			--r3 carrega FILE *mdb
+	bl	fread				--le do arquivo com esses parametros (r0, r1, r2, r3)
+	ldr	r3, [fp, #-60]			--r3= int i
+	mov	r2, r3, lsr #31		--r2=r3 shift right 31x	i/2³¹
 	add	r3, r2, r3			--r3=r2+r3
 	mov	r3, r3, asr #1		--r3=r3 shift right 1x
 	mov	r3, r3, asl #2		--r3=r3 shift left 2x
