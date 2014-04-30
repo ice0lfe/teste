@@ -120,7 +120,7 @@ main:
 	ldr	r2, [fp, #-32]			--r2=(fp-32)	r2=inicio do char *out
 	add	r4, r2, r3			--r4=r2+r3	r4=inicio do char *out + deslocamento (i*4)
 	mov	r0, #8				--r0=8		tamanho de char * 8
-	bl	malloc				--alocação de memoria
+	bl	malloc				--alocação de memoria r0
 	mov	r3, r0				--r3=r0		resultado de malloc para r3
 	str	r3, [r4, #0]			--(r4+0)=r3	r3 é guardado no endereço que está no r4
 	ldr	r3, [fp, #-60]			--r3=(fp-60)	r3= int i
@@ -186,7 +186,7 @@ main:
 	add	r3, r3, r1			--r3=r3+r1	r3 = mt + i*12 + 4
 	ldr	r3, [r3, #0]			--r3=(r3+0)	r3 = *mt->dt[i]
 	ldr	r0, .L28+20			--r0= .LC5	r0 = traz a word de .LC5 para r0
-	mov	r1, r3				--r1=r3		traz o conteudo de *mt->dt[i] para r1
+	mov	r1, r3				--r1=r3		traz o conteudo de *mt->dt[i].sname para r1
 	bl	printf				--imprimir dados do meta.dat utilizando  r0 e r1
 	ldr	r3, [fp, #-60]			--r3=(fp-60)	r3 carrega int i
 	mov	r3, r3, asl #2			--r3=r3 shift left 2x	r3=i*4
@@ -200,24 +200,24 @@ main:
 	mov	r2, #1				--r2=1		r2=quantidade de r1 s
 	ldr	r3, [fp, #-52]			--r3=(fp-52)	r3= grava FILE *mdb
 	bl	fread				--ler dados do meta.dat, atributos do fread ->	(r0, r1, r2, r3)
-	ldr	r3, [fp, #-60]			--r3=(fp-60)
-	mov	r3, r3, asl #2			--r3=r3 shift left 2x
-	ldr	r2, [fp, #-32]			--r2=(fp-32)
-	add	r3, r2, r3			--r3=r2+r3
-	ldr	r2, [r3, #0]			--r2=(r3+0)
-	ldr	r3, [fp, #-56]			--r3=(fp-56)
-	add	r3, r2, r3			--r3=r2+r3
-	ldrb	r1, [r3, #0]	@ zero_extendqisi2
-	ldr	r0, [fp, #-36]
-	ldr	r2, [fp, #-60]
-	mov	r3, r2				--r3=r2
-	mov	r3, r3, asl #1		--r3=r3 shift left 1x
-	add	r3, r3, r2			--r3=r3+r2
-	mov	r3, r3, asl #2		--r3=r3 shift left 2x
-	add	r3, r0, r3			--r3=r0+r3
-	mov	r2, r1				--r2=r1
-	strb	r2, [r3, #8]
-	ldr	r2, [fp, #-60]
+	ldr	r3, [fp, #-60]			--r3=(fp-60)	carrega int i
+	mov	r3, r3, asl #2			--r3=r3 shift left 2x	i*4
+	ldr	r2, [fp, #-32]			--r2=(fp-32)	carrega char **out
+	add	r3, r2, r3			--r3=r2+r3	faz deslocamento de **out + i*4 ou out[i]
+	ldr	r2, [r3, #0]			--r2=(r3+0)	carrega o conteudo calculado pela anterior
+	ldr	r3, [fp, #-56]			--r3=(fp-56)	carrega o int c
+	add	r3, r2, r3			--r3=r2+r3	calcula o deslocamento para out[i]+ c
+	ldrb	r1, [r3, #0]	@ zero_extendqisi2		--r1 carrega out[i] + c
+	ldr	r0, [fp, #-36]					--r0 carrega mttype *mt
+	ldr	r2, [fp, #-60]					--r2 carrega int i
+	mov	r3, r2				--r3 carrega i
+	mov	r3, r3, asl #1		--r3=r3 shift left 1x i*2
+	add	r3, r3, r2			--r3=r3+r2	i*3
+	mov	r3, r3, asl #2		--r3=r3 shift left 2x	i*12
+	add	r3, r0, r3			--r3=r0+r3	deslocamento de *mt +i*12
+	mov	r2, r1				--r2=r1		move out[i]+c para r2
+	strb	r2, [r3, #8]			-- grava na memoria  o conteúdo de out[i]+c no mt->dt[i].type
+	ldr	r2, [fp, #-60]			--r2 carrega int i
 	mov	r3, r2				--r3=r2
 	mov	r3, r3, asl #1		--r3=r3 shift left 1x
 	add	r3, r3, r2			--r3=r3+r2
@@ -227,7 +227,7 @@ main:
 	add	r3, r3, #8			--r3=r3+8
 	ldr	r0, .L28+24
 	mov	r1, r3				--r1=r3
-	bl	printf
+	bl	printf				--r0 e r1	imprime 
 	sub	r3, fp, #64			--r3=fp-64	r3 carrega endereço de int b
 	mov	r0, r3				--r0=r3		r0=endereço de int b
 	mov	r1, #4				--r1=4		r1=sizeof(int)
@@ -279,7 +279,7 @@ main:
 	bl	printf
 .L11:
 	mov	r3, #0				--r3=0
-	str	r3, [fp, #-28]			--int i guardado em (fp-28)
+	str	r3, [fp, #-28]			--guardado em (fp-28)
 	mov	r0, #128			--r0=128
 	bl	malloc				--aloca a quantidade de memoria em r0
 	mov	r3, r0				--r3=r0
